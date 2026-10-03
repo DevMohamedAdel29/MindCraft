@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@layer utilities {
+  .text-brand-navy {
+    color: #0A2558;
+  }
+  .bg-brand-navy {
+    background-color: #0A2558;
+  }
+  .border-brand-navy {
+    border-color: #0A2558;
+  }
+  .text-brand-orange {
+    color: #FF7A00;
+  }
+  .bg-brand-orange {
+    background-color: #FF7A00;
+  }
+  .border-brand-orange {
+    border-color: #FF7A00;
+  }
+  .text-brand-cyan {
+    color: #00B4D8;
+  }
+  .bg-brand-cyan {
+    background-color: #00B4D8;
+  }
+}
+

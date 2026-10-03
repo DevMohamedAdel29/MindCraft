@@ -1,0 +1,6 @@
+{
+  "name": "MindCraft - Educational Platform",
+  "description": "Mindcraft Academy — Code • Create • Imagine • Grow. Modern educational platform for interactive exams, handwritten essay evaluation, assignments, and real-time learning analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
