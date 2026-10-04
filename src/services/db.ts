@@ -19,6 +19,7 @@ import {
   Notification,
 
   StoredFile,
+  Lesson,
 
   UserRole
 
@@ -62,7 +63,8 @@ const KEYS = {
 
   CURRENT_USER: 'mindcraft_current_user',
 
-  ADMIN_SESSION: 'mindcraft_admin_session_auth'
+  ADMIN_SESSION: 'mindcraft_admin_session_auth',
+  LESSONS: 'mindcraft_lessons',
 
 };
 
@@ -113,6 +115,7 @@ class DatabaseService {
   private initDatabase(): void {
 
     [
+      KEYS.LESSONS,
 
       KEYS.PROFILES,
 
@@ -182,6 +185,8 @@ class DatabaseService {
 
       answersR,
 
+      lessonsR,
+
       assignmentsR,
 
       submissionsR,
@@ -228,6 +233,14 @@ class DatabaseService {
 
       client
 
+        .from('lessons')
+
+        .select('*')
+
+        .order('created_at', { ascending: false }),
+
+      client
+
         .from('assignments')
 
         .select('*')
@@ -265,6 +278,9 @@ class DatabaseService {
       attemptsR,
 
       answersR,
+      
+
+      lessonsR,
 
       assignmentsR,
 
@@ -349,6 +365,14 @@ class DatabaseService {
       JSON.stringify(submissionsR.data || [])
 
     );
+
+
+    
+  this.write(
+    KEYS.LESSONS,
+    JSON.stringify(lessonsR.data || [])
+  
+);
 
     this.write(
 
@@ -3220,6 +3244,176 @@ class DatabaseService {
 
   }
 
+ /* =========================================================
+   LESSONS
+========================================================= */
+
+public getLessons(
+  role?: UserRole,
+  gradeLevel?: string
+): Lesson[] {
+  const raw = this.read(KEYS.LESSONS);
+
+  const lessons: Lesson[] =
+    raw ? JSON.parse(raw) : [];
+
+  if (role === 'student') {
+    let filtered = lessons.filter(
+      lesson => lesson.is_published
+    );
+
+    if (gradeLevel) {
+      filtered = filtered.filter(
+        lesson =>
+          lesson.target_grade?.toLowerCase() ===
+          gradeLevel.toLowerCase()
+      );
+    }
+
+    return filtered.sort(
+      (a, b) =>
+        (a.order_index || 0) -
+        (b.order_index || 0)
+    );
+  }
+
+  return lessons.sort(
+    (a, b) =>
+      (a.order_index || 0) -
+      (b.order_index || 0)
+  );
+}
+
+public getLesson(
+  id: string
+): Lesson | undefined {
+  return this.getLessons().find(
+    lesson => lesson.id === id
+  );
+}
+
+public async createLesson(
+  data: Partial<Lesson>
+): Promise<Lesson> {
+  const client = this.requireSupabase();
+
+  const { data: authData } =
+    await client.auth.getUser();
+
+  const { data: lesson, error } =
+    await client
+      .from('lessons')
+      .insert({
+        title: data.title?.trim(),
+        description:
+          data.description?.trim() || null,
+        target_grade:
+          data.target_grade,
+        file_path:
+          data.file_path || null,
+        file_name:
+          data.file_name || null,
+        video_url:
+          data.video_url || null,
+        order_index:
+          data.order_index || 0,
+        is_published:
+          data.is_published ?? false,
+        created_by:
+          authData.user?.id || null
+      })
+      .select()
+      .single();
+
+  if (error) throw error;
+
+  const lessons =
+    this.getLessons();
+
+  lessons.push(
+    lesson as Lesson
+  );
+
+  this.write(
+    KEYS.LESSONS,
+    JSON.stringify(lessons)
+  );
+
+  return lesson as Lesson;
+}
+
+public async updateLesson(
+  id: string,
+  updates: Partial<Lesson>
+): Promise<Lesson> {
+  const client = this.requireSupabase();
+
+  const payload: any = {
+    ...updates,
+    updated_at:
+      new Date().toISOString()
+  };
+
+  delete payload.id;
+  delete payload.created_at;
+
+  const { data, error } =
+    await client
+      .from('lessons')
+      .update(payload)
+      .eq('id', id)
+      .select()
+      .single();
+
+  if (error) throw error;
+
+  const lessons =
+    this.getLessons();
+
+  const index =
+    lessons.findIndex(
+      lesson => lesson.id === id
+    );
+
+  if (index >= 0) {
+    lessons[index] =
+      data as Lesson;
+  }
+
+  this.write(
+    KEYS.LESSONS,
+    JSON.stringify(lessons)
+  );
+
+  return data as Lesson;
+}
+
+public async deleteLesson(
+  id: string
+): Promise<boolean> {
+  const client =
+    this.requireSupabase();
+
+  const { error } =
+    await client
+      .from('lessons')
+      .delete()
+      .eq('id', id);
+
+  if (error) throw error;
+
+  const lessons =
+    this.getLessons().filter(
+      lesson => lesson.id !== id
+    );
+
+  this.write(
+    KEYS.LESSONS,
+    JSON.stringify(lessons)
+  );
+
+  return true;
+}
   /* =========================================================
 
      ASSIGNMENT SUBMISSIONS

@@ -5,6 +5,8 @@ import { Navbar } from './components/common/Navbar';
 import { Sidebar } from './components/common/Sidebar';
 import { ToastContainer } from './components/common/ToastContainer';
 import { SupabaseModal } from './components/common/SupabaseModal';
+import { AdminLessons } from './components/admin/AdminLessons';
+import { StudentLessons } from './components/student/StudentLessons';
 
 // Landing & Auth
 import { LandingPage } from './components/landing/LandingPage';
@@ -129,6 +131,9 @@ const MainContent: React.FC = () => {
           {currentView === 'student-dashboard' && (
             <StudentDashboard onNavigate={handleNavigate} />
           )}
+          {currentView === 'student-lessons' && (
+  <StudentLessons />
+)}
 
           {currentView === 'student-exams' && (
             <StudentExams
@@ -183,6 +188,9 @@ const MainContent: React.FC = () => {
               onOpenQuestionBuilder={examId => handleNavigate('admin-question-builder', { examId })}
             />
           )}
+          {currentView === 'admin-lessons' && (
+  <AdminLessons />
+)}
 
           {currentView === 'admin-question-builder' && viewParams.examId && (
             <QuestionBuilder

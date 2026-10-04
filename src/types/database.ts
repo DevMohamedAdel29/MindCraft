@@ -148,3 +148,22 @@ export interface StoredFile {
   uploaded_at: string;
   owner_id: string;
 }
+export interface Lesson {
+  id: string;
+  title: string;
+  description?: string | null;
+
+  target_grade: string;
+
+  file_path?: string | null;
+  file_name?: string | null;
+  video_url?: string | null;
+
+  order_index: number;
+  is_published: boolean;
+
+  created_by?: string | null;
+
+  created_at: string;
+  updated_at: string;
+}

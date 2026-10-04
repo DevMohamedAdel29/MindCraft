@@ -56,33 +56,42 @@ export const Sidebar: React.FC<Props> = ({
   const pendingAssignmentReviews = submissions.filter(s => s.status === 'submitted' || s.status === 'late').length;
 
   const adminNavItems: NavItem[] = [
-    { id: 'admin-dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'admin-students', label: 'Students', icon: Users },
-    { id: 'admin-exams', label: 'Exam Management', icon: FileQuestion },
-    { 
-      id: 'admin-exam-submissions', 
-      label: 'Exam Submissions', 
-      icon: ClipboardCheck,
-      badge: pendingExamReviews > 0 ? pendingExamReviews : undefined 
-    },
-    { id: 'admin-assignments', label: 'Assignments', icon: FolderKanban },
-    { 
-      id: 'admin-assignment-submissions', 
-      label: 'Assignment Submissions', 
-      icon: FileText,
-      badge: pendingAssignmentReviews > 0 ? pendingAssignmentReviews : undefined
-    },
-    { id: 'admin-settings', label: 'System & Database', icon: Settings },
-  ];
+  { id: 'admin-dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'admin-students', label: 'Students', icon: Users },
+  { id: 'admin-exams', label: 'Exam Management', icon: FileQuestion },
+
+  { id: 'admin-lessons', label: 'Lessons', icon: BookOpen },
+
+  { 
+    id: 'admin-exam-submissions', 
+    label: 'Exam Submissions', 
+    icon: ClipboardCheck,
+    badge: pendingExamReviews > 0 ? pendingExamReviews : undefined 
+  },
+
+  { id: 'admin-assignments', label: 'Assignments', icon: FolderKanban },
+
+  { 
+    id: 'admin-assignment-submissions', 
+    label: 'Assignment Submissions', 
+    icon: FileText,
+    badge: pendingAssignmentReviews > 0 ? pendingAssignmentReviews : undefined
+  },
+
+  { id: 'admin-settings', label: 'System & Database', icon: Settings },
+];
 
   const studentNavItems: NavItem[] = [
-    { id: 'student-dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'student-exams', label: 'Exams', icon: FileQuestion },
-    { id: 'student-assignments', label: 'Assignments', icon: FolderKanban },
-    { id: 'student-submissions', label: 'My Submissions', icon: CheckSquare },
-    { id: 'student-grades', label: 'My Grades', icon: Award },
-    { id: 'student-profile', label: 'Profile', icon: UserCircle2 },
-  ];
+  { id: 'student-dashboard', label: 'Dashboard', icon: LayoutDashboard },
+
+  { id: 'student-lessons', label: 'Lessons', icon: BookOpen },
+
+  { id: 'student-exams', label: 'Exams', icon: FileQuestion },
+  { id: 'student-assignments', label: 'Assignments', icon: FolderKanban },
+  { id: 'student-submissions', label: 'My Submissions', icon: CheckSquare },
+  { id: 'student-grades', label: 'My Grades', icon: Award },
+  { id: 'student-profile', label: 'Profile', icon: UserCircle2 },
+];
 
   const items = role === 'admin' ? adminNavItems : studentNavItems;
 
@@ -123,7 +132,7 @@ export const Sidebar: React.FC<Props> = ({
         <div className="p-5 border-b border-slate-100 bg-slate-50/50">
           <div className="flex items-center gap-3">
             <img
-              src={user?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250'}
+              src={user?.avatar_url || '/admin-avatar.png'}
               alt={user?.full_name || 'User'}
               className="w-11 h-11 rounded-xl object-cover ring-2 ring-orange-500/20 shadow-sm"
             />
